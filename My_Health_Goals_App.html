@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Health & Goals</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+.container{max-width:480px;margin:auto;min-height:100vh;background:white;padding:22px}
+h1{font-size:28px;margin:8px 0 10px} h2{margin-top:0}.muted{color:#687386;font-size:14px;line-height:1.5}
+.card{background:#f7f9fc;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 3px 12px #0000000b}
+input,button,select{width:100%;padding:13px;border-radius:12px;border:1px solid #ccd4df;margin:7px 0;font-size:16px}
+button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}.secondary{background:#e8eef9;color:#17315f}
+.row{display:flex;gap:10px}.row>*{flex:1}.hidden{display:none}.check{display:flex;gap:10px;align-items:flex-start;font-size:13px}.check input{width:auto;margin-top:3px}
+.nav{display:flex;gap:7px;margin:12px 0;overflow:auto}.nav button{white-space:nowrap;padding:10px}
+.progress{height:12px;background:#e5eaf1;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#2563eb}
+.reminder{padding:12px;background:white;border:1px solid #e0e6ef;border-radius:12px;margin:8px 0}
+.badge{display:inline-block;padding:5px 9px;background:#e7f0ff;color:#2563eb;border-radius:20px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+
+<section id="terms">
+  <span class="badge">Step 1</span>
+  <h1>Welcome 👋</h1>
+  <p class="muted">This app is a general wellness and goals prototype. It is not medical advice. For children or teenagers, health, calorie, weight and exercise decisions should be made with a parent/guardian and a qualified health professional.</p>
+  <div class="card">
+    <h2>Terms & Privacy</h2>
+    <p class="muted">This demo keeps your information only in this browser. Do not enter sensitive information you do not need. A real published app would need proper Terms of Service, Privacy Policy, security, and legal review.</p>
+    <label class="check"><input id="agree" type="checkbox"> I have read and agree to the Terms and Privacy notice.</label>
+  </div>
+  <button onclick="acceptTerms()">Continue</button>
+</section>
+
+<section id="phone" class="hidden">
+  <span class="badge">Step 2</span>
+  <h1>Phone Verification</h1>
+  <p class="muted">Demo only — this does not send a real SMS.</p>
+  <input id="phoneNo" type="tel" placeholder="Phone number">
+  <button onclick="sendOtp()">Send OTP</button>
+  <div id="otpBox" class="hidden">
+    <input id="otp" inputmode="numeric" maxlength="6" placeholder="Enter demo OTP: 123456">
+    <button onclick="verifyOtp()">Verify</button>
+  </div>
+</section>
+
+<section id="profile" class="hidden">
+  <span class="badge">Step 3</span>
+  <h1>Your Profile</h1>
+  <p class="muted">Enter basic details. For users under 18, use this only with a parent/guardian and don't use the app to set restrictive diets or weight-loss targets.</p>
+  <input id="age" type="number" min="1" max="120" placeholder="Age">
+  <div class="row"><input id="weight" type="number" placeholder="Weight (kg)"><input id="height" type="number" placeholder="Height (cm)"></div>
+  <select id="goal">
+    <option value="wellness">General wellness</option>
+    <option value="fitness">Fitness & activity</option>
+    <option value="habits">Healthy habits</option>
+  </select>
+  <button onclick="saveProfile()">Create My Plan</button>
+</section>
+
+<section id="app" class="hidden">
+  <h1>My Health & Goals</h1>
+  <p id="hello" class="muted"></p>
+  <div class="nav">
+    <button onclick="showTab('health')">Health</button>
+    <button onclick="showTab('reminders')">Reminders</button>
+    <button onclick="showTab('plan')">My Plan</button>
+  </div>
+
+  <div id="health" class="tab">
+    <div class="card">
+      <h2>Health</h2>
+      <p class="muted">Calories are shown only as general educational information. This demo intentionally does not generate calorie targets for minors.</p>
+      <div id="healthInfo"></div>
+      <p><b>Today's water:</b> <span id="water">0</span> glasses</p>
+      <button onclick="addWater()">＋ Add a glass</button>
+    </div>
+  </div>
+
+  <div id="reminders" class="tab hidden">
+    <div class="card">
+      <h2>Reminders ⏰</h2>
+      <input id="remText" placeholder="Reminder (e.g. Drink water)">
+      <input id="remTime" type="time">
+      <button onclick="addReminder()">Add Reminder</button>
+      <div id="remList"></div>
+    </div>
+  </div>
+
+  <div id="plan" class="tab hidden">
+    <div class="card">
+      <h2>My Plan</h2>
+      <div id="planText"></div>
+      <p><b>Today's progress</b></p>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <button onclick="completeHabit()">Mark a healthy habit complete</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+let data=JSON.parse(localStorage.getItem('healthGoalsDemo')||'{}');
+function hideAll(){['terms','phone','profile','app'].forEach(x=>document.getElementById(x).classList.add('hidden'))}
+function acceptTerms(){
+ if(!document.getElementById('agree').checked){alert('Please read and agree first.');return}
+ hideAll();document.getElementById('phone').classList.remove('hidden')
+}
+function sendOtp(){if(!document.getElementById('phoneNo').value){alert('Enter a phone number.');return}document.getElementById('otpBox').classList.remove('hidden');alert('Demo OTP is 123456')}
+function verifyOtp(){if(document.getElementById('otp').value!=='123456'){alert('For this demo, use 123456.');return}hideAll();document.getElementById('profile').classList.remove('hidden')}
+function saveProfile(){
+ const age=Number(document.getElementById('age').value), w=Number(document.getElementById('weight').value), h=Number(document.getElementById('height').value);
+ if(!age||!w||!h){alert('Please enter age, weight and height.');return}
+ data={age,w,h,goal:document.getElementById('goal').value,water:0,habits:0,reminders:[]};
+ localStorage.setItem('healthGoalsDemo',JSON.stringify(data));loadApp()
+}
+function loadApp(){
+ hideAll();document.getElementById('app').classList.remove('hidden');
+ document.getElementById('hello').textContent=`Age: ${data.age} • Goal: ${data.goal}`;
+ document.getElementById('healthInfo').innerHTML=`<p><b>Height:</b> ${data.h} cm</p><p><b>Weight:</b> ${data.w} kg</p><p class="muted">For anyone under 18, this app does not calculate or prescribe a calorie target.</p>`;
+ document.getElementById('water').textContent=data.water||0;
+ document.getElementById('planText').innerHTML=data.age<18
+ ? '<p>Focus on regular meals, water, sleep, enjoyable activity, and healthy daily routines. Any diet, calorie restriction, or weight change should be discussed with a parent/guardian and a qualified professional.</p>'
+ : '<p>Focus on balanced meals, hydration, sleep, regular activity, and sustainable habits. For medical or weight-related goals, consult a qualified professional.</p>';
+ renderReminders(); updateBar()
+}
+function showTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function addWater(){data.water=(data.water||0)+1;save();document.getElementById('water').textContent=data.water}
+function completeHabit(){data.habits=(data.habits||0)+1;save();updateBar();alert('Nice! Habit completed.')}
+function updateBar(){document.getElementById('bar').style.width=Math.min((data.habits||0)*20,100)+'%'}
+function addReminder(){
+ const t=document.getElementById('remText').value, time=document.getElementById('remTime').value;
+ if(!t||!time){alert('Enter reminder and time.');return}
+ data.reminders=data.reminders||[];data.reminders.push({t,time});save();document.getElementById('remText').value='';renderReminders()
+}
+function renderReminders(){
+ const box=document.getElementById('remList');box.innerHTML='';
+ (data.reminders||[]).forEach((r,i)=>{const d=document.createElement('div');d.className='reminder';d.innerHTML=`<b>${r.t}</b> — ${r.time} <button class="secondary" onclick="removeReminder(${i})">Delete</button>`;box.appendChild(d)})
+}
+function removeReminder(i){data.reminders.splice(i,1);save();renderReminders()}
+function save(){localStorage.setItem('healthGoalsDemo',JSON.stringify(data))}
+if(data.age){loadApp()}
+</script>
+</body>
+</html>
