@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "My Health & Goals",
+  "orientation": "any",
+  "scope": "/My-health-goals/",
+  "short_name": "MyHealth",
+  "start_url": "/My-health-goals/",
+  "theme_color": "#ffffff"
+}
