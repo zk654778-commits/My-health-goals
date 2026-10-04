@@ -1,7 +1,20 @@
 {
   "background_color": "#ffffff",
+  "description": "A simple app to track health, fitness goals, and reminders.",
   "dir": "ltr",
   "display": "standalone",
+  "icons": [
+    {
+      "src": "launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
   "name": "My Health & Goals",
   "orientation": "any",
   "scope": "/My-health-goals/",
